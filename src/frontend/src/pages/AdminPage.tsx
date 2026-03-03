@@ -19,11 +19,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Principal as PrincipalClass } from "@icp-sdk/core/principal";
 import type { Principal } from "@icp-sdk/core/principal";
-import { Check, Copy, Loader2, Plus, ShieldX, Trash2 } from "lucide-react";
+import {
+  Check,
+  Copy,
+  ExternalLink,
+  Loader2,
+  LogOut,
+  Plus,
+  ShieldX,
+  Trash2,
+} from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -43,6 +53,7 @@ import {
   getQuotes,
   saveQuotes,
 } from "../lib/localStorage";
+import { getSessionParameter } from "../utils/urlParams";
 
 // Quotes section
 function QuotesSection() {
@@ -420,9 +431,14 @@ function RoleSection() {
 }
 
 function AccessDeniedView() {
-  const { identity } = useInternetIdentity();
+  const { identity, clear } = useInternetIdentity();
+  const { actor } = useActor();
   const principalId = identity?.getPrincipal().toString() ?? "";
   const [copied, setCopied] = useState(false);
+  const [tokenInput, setTokenInput] = useState<string>(
+    () => getSessionParameter("caffeineAdminToken") ?? "",
+  );
+  const [isClaiming, setIsClaiming] = useState(false);
 
   const handleCopy = () => {
     if (!principalId) return;
@@ -433,12 +449,54 @@ function AccessDeniedView() {
     });
   };
 
+  const handleClaimAdmin = async () => {
+    if (!actor || !tokenInput.trim()) return;
+    setIsClaiming(true);
+    try {
+      await (actor as any)._initializeAccessControlWithSecret(
+        tokenInput.trim(),
+      );
+      toast.success(
+        "Admin claim submitted! If you're a new user with the correct token, reload the page to verify access.",
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to claim admin";
+      toast.error(msg);
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
+  const handleLogout = () => {
+    clear();
+    toast.success("Logged out successfully");
+  };
+
+  const steps = [
+    {
+      num: 1,
+      text: "Log out of the app using the button below.",
+    },
+    {
+      num: 2,
+      text: "Find the admin setup link in your Caffeine dashboard (Project Settings → Admin URL).",
+    },
+    {
+      num: 3,
+      text: "Open that link in a new private/incognito browser window.",
+    },
+    {
+      num: 4,
+      text: "Log in with your Internet Identity. Admin access is granted on first login via that link.",
+    },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4 py-8"
+      className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4 py-8 max-w-lg mx-auto"
     >
       {/* Icon + heading */}
       <div className="flex flex-col items-center gap-3">
@@ -453,18 +511,119 @@ function AccessDeniedView() {
         </p>
       </div>
 
-      {/* Principal ID card */}
+      {/* How to get admin access */}
       <Card
         data-ocid="admin.access_denied.card"
-        className="w-full max-w-sm shadow-card border border-border/60 rounded-2xl"
+        className="w-full shadow-card border border-border/60 rounded-2xl"
       >
+        <CardHeader className="pb-2 pt-4 px-5">
+          <CardTitle className="font-display text-sm flex items-center gap-2">
+            <ExternalLink className="w-4 h-4 text-primary/70" />
+            How to Get Admin Access
+          </CardTitle>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Admin access is granted on first login via the special admin setup
+            link from your Caffeine dashboard. If you already logged in without
+            it, follow the steps below.
+          </p>
+        </CardHeader>
+        <CardContent className="px-5 pb-4 space-y-4">
+          {/* Steps */}
+          <ol className="space-y-2.5">
+            {steps.map((step) => (
+              <li key={step.num} className="flex items-start gap-3">
+                <span className="shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                  {step.num}
+                </span>
+                <p className="text-sm text-foreground/80 leading-snug">
+                  {step.text}
+                </p>
+              </li>
+            ))}
+          </ol>
+
+          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 rounded-xl px-4 py-3">
+            <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+              <strong>Already logged in without the admin link?</strong> You'll
+              need to log out and use the admin setup URL in a fresh
+              private/incognito session — or contact Caffeine support to
+              manually promote your account.
+            </p>
+          </div>
+
+          <Separator />
+
+          {/* Logout button */}
+          {identity && (
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground font-medium">
+                Step 1 — Log out now:
+              </p>
+              <Button
+                data-ocid="admin.access_denied.button"
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                className="w-full rounded-xl gap-2 border-destructive/30 text-destructive hover:bg-destructive/5 hover:text-destructive"
+              >
+                <LogOut className="w-4 h-4" />
+                Log Out
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Token claim (for new users arriving via admin URL) */}
+      {tokenInput && (
+        <Card className="w-full shadow-card border border-border/60 rounded-2xl">
+          <CardHeader className="pb-2 pt-4 px-5">
+            <CardTitle className="font-display text-sm">
+              Admin Token Detected
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              An admin token was found in your session. If this is your first
+              login, clicking "Claim Admin" may grant you admin access.
+            </p>
+          </CardHeader>
+          <CardContent className="px-5 pb-4 space-y-3">
+            <div>
+              <Label className="text-xs">Admin Token</Label>
+              <Input
+                data-ocid="admin.token.input"
+                value={tokenInput}
+                onChange={(e) => setTokenInput(e.target.value)}
+                placeholder="Paste admin token…"
+                className="mt-1 rounded-xl font-mono text-xs"
+              />
+            </div>
+            <Button
+              data-ocid="admin.token.submit_button"
+              size="sm"
+              onClick={() => {
+                void handleClaimAdmin();
+              }}
+              disabled={!tokenInput.trim() || isClaiming || !actor}
+              className="rounded-xl font-semibold"
+            >
+              {isClaiming ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-1" />
+              ) : null}
+              Claim Admin
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Principal ID card */}
+      <Card className="w-full shadow-card border border-border/60 rounded-2xl">
         <CardHeader className="pb-2 pt-4 px-5">
           <CardTitle className="font-display text-sm flex items-center gap-2">
             Your Principal ID
           </CardTitle>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Share this ID with an admin to get access, or log in using the admin
-            setup link.
+            Share this with Caffeine support or an existing admin to get your
+            role manually assigned.
           </p>
         </CardHeader>
         <CardContent className="px-5 pb-4">
