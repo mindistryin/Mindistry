@@ -1,0 +1,294 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   BOARDBOSS — Soft Pastel Design System
+   Palette: Lavender, Sage, Peach, Sky Blue
+   ======================================== */
+
+/* General Sans — Body */
+@font-face {
+  font-family: "General Sans";
+  src: url("/assets/fonts/GeneralSans-Variable.woff2") format("woff2");
+  font-weight: 300 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+/* Bricolage Grotesque — Display */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/assets/fonts/BricolageGrotesque-Variable.woff2") format("woff2");
+  font-weight: 300 800;
+  font-display: swap;
+  font-style: normal;
+}
+
+@layer base {
+  :root {
+    /* Pastel palette — soft & clean */
+    --radius: 0.875rem;
+
+    /* Cream/off-white background */
+    --background: 0.975 0.006 75;
+    --foreground: 0.22 0.02 260;
+
+    /* Card: white-toned */
+    --card: 0.99 0.002 85;
+    --card-foreground: 0.22 0.02 260;
+
+    /* Popover */
+    --popover: 0.99 0.002 85;
+    --popover-foreground: 0.22 0.02 260;
+
+    /* Primary: Lavender */
+    --primary: 0.55 0.12 280;
+    --primary-foreground: 0.99 0.002 85;
+
+    /* Secondary: Sage green */
+    --secondary: 0.88 0.06 155;
+    --secondary-foreground: 0.25 0.05 155;
+
+    /* Muted: soft lavender-grey */
+    --muted: 0.93 0.025 275;
+    --muted-foreground: 0.52 0.04 270;
+
+    /* Accent: Peach */
+    --accent: 0.91 0.06 55;
+    --accent-foreground: 0.3 0.07 40;
+
+    /* Destructive: soft coral */
+    --destructive: 0.65 0.18 22;
+    --destructive-foreground: 0.99 0 0;
+
+    /* Border & input */
+    --border: 0.88 0.025 275;
+    --input: 0.9 0.02 275;
+    --ring: 0.55 0.12 280;
+
+    /* Charts */
+    --chart-1: 0.65 0.15 280;
+    --chart-2: 0.62 0.12 155;
+    --chart-3: 0.72 0.12 55;
+    --chart-4: 0.68 0.14 205;
+    --chart-5: 0.65 0.18 22;
+
+    /* Sidebar */
+    --sidebar: 0.97 0.01 275;
+    --sidebar-foreground: 0.22 0.02 260;
+    --sidebar-primary: 0.55 0.12 280;
+    --sidebar-primary-foreground: 0.99 0 0;
+    --sidebar-accent: 0.93 0.025 275;
+    --sidebar-accent-foreground: 0.22 0.02 260;
+    --sidebar-border: 0.88 0.025 275;
+    --sidebar-ring: 0.55 0.12 280;
+
+    /* App-specific tokens */
+    --lavender: 0.55 0.12 280;
+    --lavender-light: 0.88 0.06 280;
+    --lavender-pale: 0.93 0.03 280;
+
+    --sage: 0.62 0.10 155;
+    --sage-light: 0.88 0.06 155;
+    --sage-pale: 0.94 0.025 155;
+
+    --peach: 0.72 0.13 55;
+    --peach-light: 0.91 0.06 55;
+    --peach-pale: 0.95 0.025 55;
+
+    --sky: 0.62 0.12 220;
+    --sky-light: 0.88 0.06 220;
+    --sky-pale: 0.94 0.025 220;
+
+    --coral: 0.65 0.18 22;
+    --coral-light: 0.88 0.08 22;
+
+    --streak-orange: 0.72 0.18 45;
+  }
+
+  .dark {
+    --background: 0.16 0.018 265;
+    --foreground: 0.93 0.01 275;
+
+    --card: 0.20 0.02 265;
+    --card-foreground: 0.93 0.01 275;
+
+    --popover: 0.20 0.02 265;
+    --popover-foreground: 0.93 0.01 275;
+
+    --primary: 0.68 0.14 285;
+    --primary-foreground: 0.12 0.01 265;
+
+    --secondary: 0.28 0.04 265;
+    --secondary-foreground: 0.88 0.03 155;
+
+    --muted: 0.24 0.025 265;
+    --muted-foreground: 0.62 0.04 270;
+
+    --accent: 0.28 0.05 55;
+    --accent-foreground: 0.88 0.06 55;
+
+    --destructive: 0.62 0.2 22;
+    --destructive-foreground: 0.98 0 0;
+
+    --border: 0.28 0.025 265;
+    --input: 0.26 0.02 265;
+    --ring: 0.68 0.14 285;
+
+    --chart-1: 0.68 0.16 285;
+    --chart-2: 0.65 0.14 155;
+    --chart-3: 0.72 0.14 55;
+    --chart-4: 0.68 0.14 205;
+    --chart-5: 0.68 0.2 22;
+
+    --sidebar: 0.18 0.02 265;
+    --sidebar-foreground: 0.93 0.01 275;
+    --sidebar-primary: 0.68 0.14 285;
+    --sidebar-primary-foreground: 0.12 0.01 265;
+    --sidebar-accent: 0.24 0.025 265;
+    --sidebar-accent-foreground: 0.93 0.01 275;
+    --sidebar-border: 0.28 0.025 265;
+    --sidebar-ring: 0.68 0.14 285;
+
+    --lavender: 0.68 0.14 285;
+    --lavender-light: 0.28 0.06 280;
+    --lavender-pale: 0.24 0.04 280;
+
+    --sage: 0.65 0.12 155;
+    --sage-light: 0.28 0.06 155;
+    --sage-pale: 0.24 0.03 155;
+
+    --peach: 0.72 0.14 55;
+    --peach-light: 0.30 0.08 55;
+    --peach-pale: 0.24 0.04 55;
+
+    --sky: 0.65 0.14 220;
+    --sky-light: 0.28 0.08 220;
+    --sky-pale: 0.22 0.04 220;
+
+    --coral: 0.65 0.18 22;
+    --coral-light: 0.28 0.08 22;
+
+    --streak-orange: 0.75 0.18 45;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .bg-lavender { background-color: oklch(var(--lavender)); }
+  .bg-lavender-light { background-color: oklch(var(--lavender-light)); }
+  .bg-lavender-pale { background-color: oklch(var(--lavender-pale)); }
+  .text-lavender { color: oklch(var(--lavender)); }
+
+  .bg-sage { background-color: oklch(var(--sage)); }
+  .bg-sage-light { background-color: oklch(var(--sage-light)); }
+  .bg-sage-pale { background-color: oklch(var(--sage-pale)); }
+  .text-sage { color: oklch(var(--sage)); }
+
+  .bg-peach { background-color: oklch(var(--peach)); }
+  .bg-peach-light { background-color: oklch(var(--peach-light)); }
+  .bg-peach-pale { background-color: oklch(var(--peach-pale)); }
+  .text-peach { color: oklch(var(--peach)); }
+
+  .bg-sky { background-color: oklch(var(--sky)); }
+  .bg-sky-light { background-color: oklch(var(--sky-light)); }
+  .bg-sky-pale { background-color: oklch(var(--sky-pale)); }
+  .text-sky { color: oklch(var(--sky)); }
+
+  .bg-coral { background-color: oklch(var(--coral)); }
+  .bg-coral-light { background-color: oklch(var(--coral-light)); }
+  .text-coral { color: oklch(var(--coral)); }
+
+  .text-streak { color: oklch(var(--streak-orange)); }
+  .bg-streak-pale { background-color: oklch(0.95 0.04 45); }
+
+  .shadow-pastel {
+    box-shadow: 0 2px 12px 0 oklch(0.55 0.08 280 / 0.12);
+  }
+  .shadow-card {
+    box-shadow: 0 1px 4px 0 oklch(0.55 0.08 280 / 0.08), 0 4px 16px 0 oklch(0.55 0.08 280 / 0.06);
+  }
+  .shadow-elevated {
+    box-shadow: 0 4px 24px 0 oklch(0.55 0.08 280 / 0.14);
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-lavender {
+    background: linear-gradient(135deg, oklch(var(--lavender-pale)), oklch(var(--sky-pale)));
+  }
+  .bg-gradient-pastel {
+    background: linear-gradient(135deg, oklch(0.975 0.015 280), oklch(0.975 0.010 155));
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: oklch(var(--muted-foreground) / 0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: oklch(var(--muted-foreground) / 0.5); }
+
+/* Pomodoro timer ring animation */
+@keyframes timer-ring {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 339.292; }
+}
+
+/* Gentle pulse for streak */
+@keyframes gentle-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.animate-gentle-pulse {
+  animation: gentle-pulse 2s ease-in-out infinite;
+}
+
+/* Dashboard hero band — mesh gradient */
+.dashboard-hero {
+  background:
+    radial-gradient(ellipse 60% 80% at 0% 0%, oklch(0.88 0.06 280 / 0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 70% at 100% 100%, oklch(0.88 0.06 220 / 0.45) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 60% at 60% 0%, oklch(0.91 0.06 55 / 0.30) 0%, transparent 60%),
+    oklch(var(--card));
+}
+
+.dark .dashboard-hero {
+  background:
+    radial-gradient(ellipse 60% 80% at 0% 0%, oklch(0.28 0.07 280 / 0.6) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 70% at 100% 100%, oklch(0.26 0.06 220 / 0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 60% at 60% 0%, oklch(0.28 0.07 55 / 0.35) 0%, transparent 60%),
+    oklch(var(--card));
+}
+
+/* Research page hero */
+.research-hero {
+  background:
+    radial-gradient(ellipse 70% 90% at 15% 50%, oklch(0.88 0.07 280 / 0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 70% at 85% 20%, oklch(0.91 0.05 55 / 0.35) 0%, transparent 60%),
+    oklch(var(--card));
+}
+
+.dark .research-hero {
+  background:
+    radial-gradient(ellipse 70% 90% at 15% 50%, oklch(0.28 0.08 280 / 0.65) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 70% at 85% 20%, oklch(0.26 0.06 55 / 0.4) 0%, transparent 60%),
+    oklch(var(--card));
+}
+
+/* Widget left-edge accent bars */
+.widget-accent-lavender { box-shadow: inset 3px 0 0 oklch(var(--lavender)); }
+.widget-accent-sage     { box-shadow: inset 3px 0 0 oklch(var(--sage)); }
+.widget-accent-peach    { box-shadow: inset 3px 0 0 oklch(var(--peach)); }
+.widget-accent-sky      { box-shadow: inset 3px 0 0 oklch(var(--sky)); }
+.widget-accent-streak   { box-shadow: inset 3px 0 0 oklch(var(--streak-orange)); }
