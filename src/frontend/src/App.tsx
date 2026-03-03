@@ -9,7 +9,6 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { AppShell } from "./components/app/AppShell";
-import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import { useUserProfile } from "./hooks/useQueries";
 import { AIResearchPage } from "./pages/AIResearchPage";
@@ -57,10 +56,9 @@ function RootComponent() {
 }
 
 function AuthenticatedRoot() {
-  const { actor, isFetching: isActorFetching } = useActor();
-  const { data: profile, isLoading: isProfileLoading } = useUserProfile();
+  const { data: profile, isLoading } = useUserProfile();
 
-  if (isActorFetching || isProfileLoading || (!actor && !profile)) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">

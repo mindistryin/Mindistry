@@ -23,12 +23,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Principal as PrincipalClass } from "@icp-sdk/core/principal";
 import type { Principal } from "@icp-sdk/core/principal";
-import { Loader2, Plus, ShieldX, Trash2 } from "lucide-react";
+import { Check, Copy, Loader2, Plus, ShieldX, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { UserRole } from "../backend.d";
 import { useActor } from "../hooks/useActor";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import { useIsAdmin } from "../hooks/useQueries";
 import {
   type Announcement,
@@ -418,6 +419,92 @@ function RoleSection() {
   );
 }
 
+function AccessDeniedView() {
+  const { identity } = useInternetIdentity();
+  const principalId = identity?.getPrincipal().toString() ?? "";
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (!principalId) return;
+    void navigator.clipboard.writeText(principalId).then(() => {
+      setCopied(true);
+      toast.success("Principal ID copied!");
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4 py-8"
+    >
+      {/* Icon + heading */}
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
+          <ShieldX className="w-8 h-8 text-destructive/60" />
+        </div>
+        <h2 className="font-display font-bold text-2xl text-center">
+          Access Denied
+        </h2>
+        <p className="text-sm text-muted-foreground text-center max-w-xs">
+          This section is only accessible to administrators.
+        </p>
+      </div>
+
+      {/* Principal ID card */}
+      <Card
+        data-ocid="admin.access_denied.card"
+        className="w-full max-w-sm shadow-card border border-border/60 rounded-2xl"
+      >
+        <CardHeader className="pb-2 pt-4 px-5">
+          <CardTitle className="font-display text-sm flex items-center gap-2">
+            Your Principal ID
+          </CardTitle>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Share this ID with an admin to get access, or log in using the admin
+            setup link.
+          </p>
+        </CardHeader>
+        <CardContent className="px-5 pb-4">
+          {principalId ? (
+            <div className="flex items-center gap-2">
+              <code
+                data-ocid="admin.principal_id.panel"
+                className="flex-1 min-w-0 text-xs font-mono bg-muted rounded-xl px-3 py-2.5 break-all select-all leading-relaxed"
+              >
+                {principalId}
+              </code>
+              <Button
+                data-ocid="admin.principal_id.button"
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                className="shrink-0 rounded-xl h-9 w-9 p-0"
+                title="Copy Principal ID"
+              >
+                {copied ? (
+                  <Check className="w-4 h-4 text-green-600" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
+          ) : (
+            <p
+              data-ocid="admin.principal_id.loading_state"
+              className="text-xs text-muted-foreground italic"
+            >
+              Log in to see your Principal ID
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 export function AdminPage() {
   const { data: isAdmin, isLoading } = useIsAdmin();
 
@@ -430,15 +517,7 @@ export function AdminPage() {
   }
 
   if (!isAdmin) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 px-4">
-        <ShieldX className="w-12 h-12 text-muted-foreground/40" />
-        <h2 className="font-display font-bold text-xl">Access Denied</h2>
-        <p className="text-sm text-muted-foreground text-center max-w-xs">
-          This section is only accessible to administrators.
-        </p>
-      </div>
-    );
+    return <AccessDeniedView />;
   }
 
   return (

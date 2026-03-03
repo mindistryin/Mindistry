@@ -296,8 +296,6 @@ export function useSaveUserProfile() {
       if (!actor) throw new Error("Not connected");
       return actor.saveCallerUserProfile({ name });
     },
-    retry: 3,
-    retryDelay: 1500,
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["userProfile"] });
     },
